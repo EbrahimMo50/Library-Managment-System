@@ -1,0 +1,47 @@
+CREATE TABLE Person(
+ID int PRIMARY KEY IDENTITY(1,1) NOT NULL,
+Fname VARCHAR(255) NOT NULL,
+Lname VARCHAR(255) NOT NULL,
+email VARCHAR(255) UNIQUE,
+password VARCHAR(255) NOT NULL,
+Role VARCHAR(255) CHECK ( Role in ('Admin','Student')) DEFAULT 'Student'
+);
+
+CREATE TABLE Book (
+  ISBN INT PRIMARY KEY IDENTITY(1,1),
+  Title VARCHAR(255) NOT NULL,
+  PublicationYear INT
+);
+
+CREATE TABLE Author (
+  ID INT PRIMARY KEY IDENTITY(1,1),
+  Name VARCHAR(255) NOT NULL,
+);
+
+CREATE TABLE Copy (
+  ID INT PRIMARY KEY IDENTITY(1,1),
+  bookISBN INT FOREIGN KEY REFERENCES Book(ISBN),
+  IsAvailable BIT NOT NULL,
+  BorrowedDate DATE NOT NULL DEFAULT(GETDATE()),
+  ReturnDate DATE,
+  OwnerID INT FOREIGN KEY REFERENCES Person(ID)		/*if there is no owner to the copy make it null*/
+);
+
+/*table for the many to many relation between author and book*/
+CREATE TABLE Contain (
+  bookISBN INT FOREIGN KEY REFERENCES Book(ISBN),
+  AuthorID INT FOREIGN KEY REFERENCES Author(ID)
+);
+
+CREATE TABLE Category (
+  ID INT PRIMARY KEY IDENTITY(1,1),
+  Name VARCHAR(255),
+  bookISBN INT FOREIGN KEY REFERENCES Book(ISBN), 
+  Descreption VARCHAR(255)
+);
+
+CREATE TABLE WaitingList (
+  UserID INT FOREIGN KEY REFERENCES Person(ID),
+  bookISBN INT FOREIGN KEY REFERENCES Book(ISBN),
+  Pattern INT IDENTITY(1,1)
+);
